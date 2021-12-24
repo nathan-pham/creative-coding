@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🎯</text></svg>" />
+    <title>Sketch 01: Atomic</title>
+
+    <link rel="stylesheet" href="/globals/style.css" />
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.4.0/p5.min.js"></script>
+    <script src="/globals/utils.js"></script>
+</head>
+<body>
+    <script>
+
+        let palette, circles
+        const margin = 100
+
+        function setup() {
+
+            // initialize canvas
+            background(255)
+            createCanvas(600, 600)
+            palette = random(colors)
+
+            circles = createGrid(4).map(pos => {
+
+                const r = random([ 20, 40 ])
+
+                const circle = {
+                    u: pos[0],
+                    v: pos[1], 
+                    r,
+                    color: random(palette),
+                    
+                    outerR: random([ 0, 0, 1, 1, 1, 2, 3 ]),
+                    outerRColor: random(palette),
+                }
+
+                return circle
+
+            }).forEach(point => {
+
+                if(point.outerR == 1) {
+                    
+                    stroke(point.outerRColor)
+                    strokeWeight(2)
+                    noFill()
+                    circle(
+                        lerp(margin, width - margin, point.u),
+                        lerp(margin, height - margin, point.v),
+                        point.r * 2
+                    )
+
+                } else if(point.outerR == 2) {
+
+                    const n = point.r == 20 ? 10 : 15
+
+                    for(let i = 0; i < n; i++) {
+
+                        // draw several rectangles around a circle all pointing inwards
+                        const center = createVector(
+                            lerp(margin, width - margin, point.u),
+                            lerp(margin, height - margin, point.v)
+                        )
+
+                        const angle = map(i, 0, n, 0, TWO_PI)
+
+                        const offset = createVector(
+                            cos(angle) * (point.r + 10),
+                            sin(angle) * (point.r + 10)
+                        )
+
+                        const pos = center.copy().add(offset)
+
+                        push()
+
+                        noStroke()
+                        fill(point.outerRColor)
+                        translate(pos.x, pos.y)
+                        rotate(angle)
+                        rectMode(CENTER)
+                        rect(0, 0, 10, 1)
+
+                        pop()
+                        
+                    }
+
+                } else if(point.outerR == 3) {
+
+                    // rotate(random(TAU))
+                    const angleOffset = random(TAU)
+
+                    for(let i = 0; i < 5; i++) {
+
+                        const center = createVector(
+                            lerp(margin, width - margin, point.u),
+                            lerp(margin, height - margin, point.v)
+                        )
+
+                        const angle = map(i, 0, 5, 0, PI) + angleOffset
+
+                        const offset = createVector(
+                            cos(angle) * (point.r + 10),
+                            sin(angle) * (point.r + 10)
+                        )
+
+                        const pos = center.copy().add(offset)
+
+                        push()
+
+                        noStroke()
+                        fill(point.outerRColor)
+                        circle(pos.x, pos.y, i * 1.5 + 5)
+
+                        pop()
+
+
+                    }
+
+
+                }
+
+                noStroke()
+                fill(point.color)
+                circle(
+                    lerp(margin, width - margin, point.u),
+                    lerp(margin, height - margin, point.v),
+                    point.r
+                )
+
+            })
+
+        }
+
+        function mouseClicked() {
+            saveCanvas("sketch_01", "png")
+        }
+
+    </script>
+</body>
+</html>
