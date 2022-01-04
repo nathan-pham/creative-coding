@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🎯</text></svg>" />
+    <title>Sketch 07: Asteroid</title>
+
+    <link rel="stylesheet" href="/globals/style.css" />
+
+    <!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.9.0/gsap.min.js"></script> -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.4.0/p5.min.js"></script>
+    <script src="/globals/utils.js"></script>
+</head>
+<body>
+    <script>
+
+        let palette = []
+
+        let particles = []
+        let asteroid
+
+        const radius = 200
+        const margin = 30
+        let centerX
+        let centerY
+
+        // create a randomized particle
+        const createParticle = () => {
+
+            const r = radius / 2 * sqrt(random())
+            const theta = random() * TWO_PI
+
+            return ({
+                size: 0,
+                maxSize: random(5, 15),
+                pos: createVector(centerX + r * cos(theta), centerY + r * sin(theta)),
+                vel: createVector(0, 0),
+                acc: createVector(0, 0),
+            })
+
+        }
+
+        // create a randomized "asteroid"
+        const createAsteroid = (minSize, maxSize, verticeCount) => {
+
+            const vertices = []
+            const spread = TWO_PI / (verticeCount + 1)
+
+            for(let i = 0; i < verticeCount; i++) {
+                vertices.push(p5.Vector.fromAngle(random(i * spread, (i + 1) * spread)).mult(random(minSize, maxSize)))
+            }
+
+            return vertices
+
+        }
+
+        // p5.js setup function
+        function setup() {
+
+            createCanvas(500, 500)
+
+            centerX = -margin + width  - (radius / 2), // width - 50 //width / 2
+            centerY = -margin + height - (radius / 2)
+            asteroid = createAsteroid(width / 5, height / 5, random(6, 10))
+
+            palette = shuffle(random(colors)).slice(0, 2)
+
+            console.log(asteroid)
+            
+        }
+
+        // p5.js draw function
+        function draw() {
+
+
+            // shake screen
+            translate(random(-3, 3), random(-3, 3))
+
+            const [ backgroundColor, circleColor ] = palette
+
+            background(backgroundColor)
+
+            // render central asteroid
+
+            push()
+
+            strokeWeight(3)
+            stroke(circleColor)
+            fill(backgroundColor)
+            
+            translate(centerX, centerY)
+
+            beginShape()
+            for(const vertice of asteroid) vertex(vertice.x, vertice.y)
+            endShape(CLOSE)
+
+            pop()
+            // noFill(backgroundColor)
+            // strokeWeight(3)
+            // stroke(circleColor)
+            // circle(centerX, centerY, radius)
+
+            // create new particle
+            for(let i = 0; i < 3; i++) particles.push(createParticle())
+
+            for(const particle of particles) {
+
+                // remove particle if off screen
+                if(particle.pos.x < -2 * particle.maxSize) {
+                    particles.splice(particles.indexOf(particle), 1)
+                    continue
+                }
+
+                // update particle position
+                particle.acc.add(createVector(random(-100, 0) - particle.pos.x, random(-100, 0) - particle.pos.y).setMag(0.05))
+                particle.vel.add(particle.acc)
+                particle.vel.limit(5)
+                particle.pos.add(particle.vel)
+                particle.acc.mult(0)        
+                
+                // update particle size
+                if(particle.size < particle.maxSize) particle.size += 0.5
+
+                // render particle
+                push()
+
+                noStroke()
+                fill(circleColor)
+                translate(particle.pos.x, particle.pos.y)
+                rotate(particle.vel.heading())
+                rectMode(CENTER)
+                rect(0, 0, particle.size, 3, 100)
+                
+                pop()
+
+            }
+
+
+        }
+
+        // p5.js save function
+        function mouseClicked() {
+            saveCanvas("sketch_07", "jpg")
+        }
+
+    </script>
+</body>
+</html>
