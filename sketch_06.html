@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🎯</text></svg>" />
+    <title>Sketch 06: Saturn</title>
+
+    <link rel="stylesheet" href="/globals/style.css" />
+
+    <!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.9.0/gsap.min.js"></script> -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.4.0/p5.min.js"></script>
+    <script src="/globals/utils.js"></script>
+</head>
+<body>
+    <script>
+
+        let saturnImage
+        let saturnImagePixels = []
+
+        let radiuses = [1, 2, 3, 4]
+        let palette = []
+
+        let spacing = 6
+        let colorFactor = 10
+
+        // p5.js preload function
+        function preload() {
+
+            saturnImage = loadImage("https://cdn.shopify.com/s/files/1/1061/1924/products/17_grande.png?v=1571606116")
+        
+        }
+
+        // p5.js setup function
+        function setup() {
+
+            createCanvas(saturnImage.width / 2, saturnImage.height / 2)
+            palette = random(colors).map(c => color(c))
+
+            image(saturnImage, 0, 0, width, height)
+
+            loadPixels()
+
+            const d = pixelDensity()
+
+            const index = (x, y) => 4 * d * (y * d * width + x)
+
+            for(let y = 0; y < height; y += spacing) {
+                for(let x = 0; x < width; x += spacing) {
+                    
+                    const i = index(x, y)
+                    const pixel = [pixels[i], pixels[i + 1], pixels[i + 2]]
+                    
+                    const quantizedPixel = pixel.map(c => round(colorFactor * c / 255) * (255 / colorFactor))
+
+                    saturnImagePixels.push({
+                        fillColor: palette[round(map(quantizedPixel.reduce((a, b) => a + b), 0, 255 * 3, 0, palette.length - 1))],
+                        radius: radiuses[round(map(quantizedPixel.reduce((a, b) => a + b), 0, 255 * 3, 0, radiuses.length - 1))],
+                        originPos: createVector(x, y),
+                        pos: createVector(x, y),
+                        vel: createVector(0, 0),
+                        acc: createVector(0, 0)
+                    })
+
+                }
+            }
+
+        }
+
+        // p5.js draw function
+        function draw() {
+
+            background(palette[0])
+
+            for(const pixel of saturnImagePixels) {
+
+                const distance = dist(pixel.pos.x, pixel.pos.y, mouseX, mouseY)
+
+                if(distance < 75) {
+
+                    const force = createVector(mouseX - pixel.pos.x, mouseY - pixel.pos.y)
+                    force.setMag(1)
+                    pixel.acc.add(force)
+
+                } else {
+
+                    pixel.acc.add(pixel.vel.copy().mult(-0.1))
+
+                    const originDistance = dist(pixel.originPos.x, pixel.originPos.y, pixel.pos.x, pixel.pos.y)
+
+                    // if(originDistance > 10) {
+                        const force = createVector(pixel.originPos.x - pixel.pos.x, pixel.originPos.y - pixel.pos.y)
+                        force.setMag(1)
+                        pixel.acc.add(force)
+                    // } 
+
+                    if(originDistance < 1) {
+                        pixel.pos = pixel.originPos.copy()
+                        pixel.vel.mult(0)
+                        pixel.acc.mult(0)
+                    }
+                    
+                    // // accelerate pixel to original position
+                    
+
+                }
+
+                pixel.vel.add(pixel.acc)
+                pixel.vel.limit(5)
+                pixel.pos.add(pixel.vel)
+                pixel.acc.mult(0)
+
+                // render pixel
+                noStroke()
+                fill(pixel.fillColor)
+                circle(pixel.pos.x + (pixel.radius / 2), pixel.pos.y + (pixel.radius / 2), pixel.radius)
+
+            }
+
+        }
+
+        // p5.js save function
+        function mouseClicked() {
+            saveCanvas("sketch_06", "jpg")
+        }
+
+    </script>
+</body>
+</html>
