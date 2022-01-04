@@ -20,11 +20,13 @@
         let saturnImage
         let saturnImagePixels = []
 
-        let radiuses = [1, 2, 3, 4]
+        let radiuses = [2, 3, 4]
         let palette = []
 
-        let spacing = 6
-        let colorFactor = 10
+        let spacing = 5
+        let colorFactor = 100
+
+        let direction = 1
 
         // p5.js preload function
         function preload() {
@@ -37,7 +39,7 @@
         function setup() {
 
             createCanvas(saturnImage.width / 2, saturnImage.height / 2)
-            palette = random(colors).map(c => color(c))
+            palette = random(colors)
 
             image(saturnImage, 0, 0, width, height)
 
@@ -72,7 +74,7 @@
         // p5.js draw function
         function draw() {
 
-            background(palette[0])
+            background(0)
 
             for(const pixel of saturnImagePixels) {
 
@@ -81,7 +83,7 @@
                 if(distance < 75) {
 
                     const force = createVector(mouseX - pixel.pos.x, mouseY - pixel.pos.y)
-                    force.setMag(1)
+                    force.setMag(direction)
                     pixel.acc.add(force)
 
                 } else {
@@ -115,7 +117,8 @@
                 // render pixel
                 noStroke()
                 fill(pixel.fillColor)
-                circle(pixel.pos.x + (pixel.radius / 2), pixel.pos.y + (pixel.radius / 2), pixel.radius)
+                // circle(pixel.pos.x + (pixel.radius / 2), pixel.pos.y + (pixel.radius / 2), pixel.radius)
+                rect(pixel.pos.x, pixel.pos.y, pixel.radius)
 
             }
 
@@ -123,7 +126,9 @@
 
         // p5.js save function
         function mouseClicked() {
-            saveCanvas("sketch_06", "jpg")
+
+            direction *= -1
+
         }
 
     </script>
