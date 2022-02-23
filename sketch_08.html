@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🎯</text></svg>" />
+    <title>Sketch 08: Creative Link</title>
+
+    <link rel="stylesheet" href="/globals/style.css" />
+
+    <style>
+        #app {
+            height: 100vh;
+            width: 100vw;
+            display: grid;
+            place-items: center;
+        }
+
+        .creative-button {
+            border: 1px solid #000;
+            border-radius: 100rem;
+            background: #fff;
+            height: 4rem;
+            width: 4rem;
+            display: grid;
+            place-items: center;
+            cursor: pointer;
+            transition: transform 0.2s ease-out;
+        }
+
+        .creative-button svg {
+            height: 1.25rem;
+            width: 1.25rem;
+        }
+    </style>
+</head>
+<body>
+    <div id="app">
+        <button class="creative-button">
+            <svg width="15" height="15" viewBox="0 0 15 15" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M8.14645 3.14645C8.34171 2.95118 8.65829 2.95118 8.85355 3.14645L12.8536 7.14645C13.0488 7.34171 13.0488 7.65829 12.8536 7.85355L8.85355 11.8536C8.65829 12.0488 8.34171 12.0488 8.14645 11.8536C7.95118 11.6583 7.95118 11.3417 8.14645 11.1464L11.2929 8H2.5C2.22386 8 2 7.77614 2 7.5C2 7.22386 2.22386 7 2.5 7H11.2929L8.14645 3.85355C7.95118 3.65829 7.95118 3.34171 8.14645 3.14645Z" fill="currentColor" fill-rule="evenodd" clip-rule="evenodd"></path></svg>
+        </button>
+    </div>
+
+    <script>
+
+        const $creativeButton = document.querySelector(".creative-button")
+        const $creativeButtonSVG = $creativeButton.querySelector("svg")
+
+        $creativeButton.addEventListener("mousemove", e => {
+            const bbox = $creativeButton.getBoundingClientRect()
+            const x = e.clientX - bbox.left - (bbox.width / 2)
+            const y = e.clientY - bbox.top - (bbox.height / 2)
+
+            $creativeButton.style.transform = `translate(${x}px, ${y}px)`
+            $creativeButtonSVG.style.transform = `translate(${x / 5}px, ${y / 5}px)`
+            // console.log(x, y)
+        })
+
+        $creativeButton.addEventListener("mouseleave", e => {
+            $creativeButton.style.transform = "translate(0, 0)"
+            $creativeButtonSVG.style.transform = "translate(0, 0)"
+        })
+
+    </script>
+</body>
+</html>
