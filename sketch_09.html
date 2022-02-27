@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8" />
+        <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+        <link
+            rel="icon"
+            href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🎯</text></svg>"
+        />
+        <title>Sketch 09: Slick Link</title>
+
+        <style>
+            :root {
+                --primary: #eeddb5;
+                --background: #141414;
+            }
+
+            html,
+            body {
+                height: 100%;
+                width: 100%;
+                padding: 0;
+                margin: 0;
+                box-sizing: border-box;
+                background: var(--background);
+                font-family: sans-serif;
+            }
+
+            *,
+            ::before,
+            ::after {
+                box-sizing: inherit;
+            }
+
+            .nav {
+                width: 100%;
+                padding: 2rem 3rem;
+                display: flex;
+                justify-content: flex-end;
+                gap: 2rem;
+            }
+
+            .nav__slick-link {
+                font-size: 1.125rem;
+                color: var(--primary);
+                text-decoration: none;
+                height: 1.5rem;
+                overflow: hidden;
+            }
+        </style>
+    </head>
+    <body>
+        <nav class="nav">
+            <a class="nav__slick-link" href="#">About</a>
+            <a class="nav__slick-link" href="#">Lab</a>
+            <a class="nav__slick-link" href="#">Contact</a>
+        </nav>
+
+        <script type="module">
+            import gsap, { Expo } from "https://esm.sh/gsap@3.9.1";
+
+            const spanify = (el) => {
+                const text = typeof el == "string" ? el : el.textContent;
+                const chars = text.split("").map((char) => {
+                    const span = document.createElement("span");
+                    span.textContent = char;
+                    span.style.display = "inline-block";
+                    return span;
+                });
+
+                return chars;
+            };
+
+            const slickLinks = [
+                ...document.querySelectorAll(".nav__slick-link"),
+            ];
+
+            slickLinks.forEach((link) => {
+                const textContent = link.textContent;
+                const spans1 = spanify(textContent);
+                link.textContent = "";
+                link.append(...spans1);
+
+                const div = document.createElement("div");
+                const spans2 = spanify(textContent);
+                div.append(...spans2);
+                link.append(div);
+
+                const timeline = gsap
+                    .timeline({ paused: true })
+                    .add("start")
+                    .fromTo(
+                        spans1,
+                        {
+                            y: 0,
+                            skewX: 0,
+                        },
+                        {
+                            ease: Expo.easeInOut,
+                            stagger: 0.05,
+                            y: -20,
+                            skewX: 40,
+                        },
+                        "start"
+                    )
+                    .fromTo(
+                        spans2,
+                        {
+                            y: 0,
+                            skewX: 40,
+                        },
+                        {
+                            delay: 0.1,
+                            ease: Expo.easeInOut,
+                            stagger: 0.05,
+                            opacity: 1,
+                            y: -20,
+                            skewX: 0,
+                        },
+                        "start"
+                    );
+
+                link.addEventListener("mouseover", () => {
+                    timeline.play();
+                });
+
+                link.addEventListener("mouseleave", () => {
+                    timeline.reverse();
+                });
+            });
+        </script>
+    </body>
+</html>

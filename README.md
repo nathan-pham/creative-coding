@@ -10,3 +10,4 @@ Random ass 2D experiments, probably should be on Codepen
 - [Sketch 06: Returning Spheres](sketch_06.html)
 - [Sketch 07: Asteroid](sketch_07.html)
 - [Sketch 08: Creative Link](sketch_08.html)
+- [Sketch 09: Slick Link](sketch_09.html)
