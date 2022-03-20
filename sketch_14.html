@@ -13,8 +13,9 @@
 
         <link rel="stylesheet" href="/globals/style.css" />
 
-        <!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.9.0/gsap.min.js"></script> -->
         <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.4.0/p5.min.js"></script>
+        <!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.9.0/gsap.min.js"></script> -->
+        <script src="https://unpkg.com/p5.createloop@0.2.8/dist/p5.createloop.js"></script>
         <script src="/globals/utils.js"></script>
     </head>
     <body>
@@ -23,9 +24,10 @@
             let bg, palette;
 
             const size = 20;
-            const margin = 20;
+            const margin = 10;
 
             let offset = 0;
+            let time = 0;
 
             function setup() {
                 createCanvas(500, 500);
@@ -33,6 +35,7 @@
                 [bg, ...palette] = shuffle(random(colors));
                 grid = [];
                 offset = random(-1000, 1000);
+                time = 0;
 
                 for (let x = 0; x < size; x++) {
                     for (let y = 0; y < size; y++) {
@@ -40,13 +43,13 @@
                             new Cell({
                                 x: x / (size - 1),
                                 y: y / (size - 1),
-                                color: palette[
-                                    floor(noise(x, y) * palette.length)
-                                ],
+                                color: random(palette),
                             })
                         );
                     }
                 }
+
+                // createLoop({ duration: 3, gif: true, open: true });
             }
 
             // p5.js draw function
@@ -55,6 +58,8 @@
 
                 grid.forEach((cell) => cell.update());
                 grid.forEach((cell) => cell.draw());
+
+                time += 0.05;
             }
 
             // p5.js new sketch
@@ -70,8 +75,8 @@
                     this.y = y;
                     this.color = color;
 
-                    this.maxSize = 20;
-                    this.minSize = 0;
+                    this.maxSize = width / size;
+                    this.minSize = 1;
 
                     this.sizeVel = random([-1, 1]) / random(10, 20);
                     this.size =
@@ -93,8 +98,19 @@
                     const x = lerp(margin, width - margin, this.x);
                     const y = lerp(margin, height - margin, this.y);
 
-                    const mag = dist(x, y, mouseX, mouseY);
-                    const size = map(mag, 0, width, this.minSize, this.maxSize);
+                    const mag = constrain(
+                        dist(
+                            x,
+                            y,
+                            sin(time) * width + width / 2,
+                            cos(time) * height + height / 2
+                        ),
+                        0,
+                        width
+                    );
+
+                    const size =
+                        map(mag, 0, width, this.minSize, this.maxSize) + 1;
 
                     fill(this.color);
                     noStroke();

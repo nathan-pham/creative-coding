@@ -17,3 +17,4 @@ Random ass 2D experiments, probably should be on Codepen
 -   [Sketch 11: Landscape](sketch_11.html)
 -   [Sketch 12: Beautiful Flow Fields](sketch_12.html)
 -   [Sketch 13: Sunset](sketch_13.html)
+-   [Sketch 14: Fluid Grid](sketch_14.html)
