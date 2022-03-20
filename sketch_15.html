@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8" />
+        <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+        <link
+            rel="icon"
+            href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🎯</text></svg>"
+        />
+        <title>Sketch 14: Camo</title>
+
+        <link rel="stylesheet" href="/globals/style.css" />
+
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.4.0/p5.min.js"></script>
+        <!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.9.0/gsap.min.js"></script> -->
+        <!-- <script src="https://unpkg.com/p5.createloop@0.2.8/dist/p5.createloop.js"></script> -->
+        <script src="/globals/utils.js"></script>
+    </head>
+    <body>
+        <script>
+            let palette;
+            let grid = [];
+            let size = 200;
+
+            function setup() {
+                const vmin = min(innerWidth, innerHeight);
+                createCanvas(vmin, vmin);
+
+                palette = shuffle(random(colors));
+
+                palette = [palette[0], ...palette];
+
+                const offset = random(-1000, 1000);
+
+                for (let x = 0; x < size; x++) {
+                    for (let y = 0; y < size; y++) {
+                        grid.push(
+                            new Cell({
+                                x: x / (size - 1),
+                                y: y / (size - 1),
+                                elevation: constrain(
+                                    noise(
+                                        (x / size) * 5,
+                                        (y / size) * 5,
+                                        offset
+                                    ) * 1.1,
+                                    0,
+                                    1
+                                ),
+                            })
+                        );
+                    }
+                }
+            }
+
+            // p5.js draw function
+            function draw() {
+                background(palette[0]);
+
+                grid.forEach((cell) => cell.update());
+                grid.forEach((cell) => cell.draw());
+            }
+
+            // p5.js new sketch
+            function keyPressed() {
+                if (keyCode == 32) {
+                    setup();
+                }
+            }
+
+            class Cell {
+                constructor({ x, y, elevation }) {
+                    this.x = x;
+                    this.y = y;
+                    this.elevation = floor(
+                        map(elevation, 0, 1, 0, palette.length)
+                    );
+
+                    this.color = palette[this.elevation];
+                    this.size = ceil(width / size) + 2;
+                }
+
+                update() {}
+
+                draw() {
+                    const x = lerp(0, width, this.x);
+                    const y = lerp(0, height, this.y);
+
+                    fill(this.color);
+                    noStroke();
+                    rect(x, y, this.size, this.size);
+                }
+            }
+        </script>
+    </body>
+</html>
