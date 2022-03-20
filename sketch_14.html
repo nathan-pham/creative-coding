@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8" />
+        <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+        <link
+            rel="icon"
+            href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🎯</text></svg>"
+        />
+        <title>Sketch 13: Fluid Grid</title>
+
+        <link rel="stylesheet" href="/globals/style.css" />
+
+        <!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.9.0/gsap.min.js"></script> -->
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.4.0/p5.min.js"></script>
+        <script src="/globals/utils.js"></script>
+    </head>
+    <body>
+        <script>
+            let grid = [];
+            let bg, palette;
+
+            const size = 20;
+            const margin = 20;
+
+            let offset = 0;
+
+            function setup() {
+                createCanvas(500, 500);
+
+                [bg, ...palette] = shuffle(random(colors));
+                grid = [];
+                offset = random(-1000, 1000);
+
+                for (let x = 0; x < size; x++) {
+                    for (let y = 0; y < size; y++) {
+                        grid.push(
+                            new Cell({
+                                x: x / (size - 1),
+                                y: y / (size - 1),
+                                color: palette[
+                                    floor(noise(x, y) * palette.length)
+                                ],
+                            })
+                        );
+                    }
+                }
+            }
+
+            // p5.js draw function
+            function draw() {
+                background(bg);
+
+                grid.forEach((cell) => cell.update());
+                grid.forEach((cell) => cell.draw());
+            }
+
+            // p5.js new sketch
+            function keyPressed() {
+                if (keyCode == 32) {
+                    setup();
+                }
+            }
+
+            class Cell {
+                constructor({ x, y, color }) {
+                    this.x = x;
+                    this.y = y;
+                    this.color = color;
+
+                    this.maxSize = 20;
+                    this.minSize = 0;
+
+                    this.sizeVel = random([-1, 1]) / random(10, 20);
+                    this.size =
+                        noise(this.x + offset, this.y + offset) * this.maxSize;
+                }
+
+                update() {
+                    if (
+                        this.size <= this.minSize ||
+                        this.size >= this.maxSize
+                    ) {
+                        this.sizeVel *= -1;
+                    }
+
+                    this.size += this.sizeVel;
+                }
+
+                draw() {
+                    const x = lerp(margin, width - margin, this.x);
+                    const y = lerp(margin, height - margin, this.y);
+
+                    const mag = dist(x, y, mouseX, mouseY);
+                    const size = map(mag, 0, width, this.minSize, this.maxSize);
+
+                    fill(this.color);
+                    noStroke();
+                    rectMode(CENTER);
+                    rect(x, y, size, size);
+                }
+            }
+        </script>
+    </body>
+</html>
