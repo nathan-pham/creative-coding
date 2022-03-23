@@ -54,7 +54,8 @@
             .waavy__input {
                 outline: none;
                 border: none;
-                padding: 2rem;
+                padding: 2rem 0;
+                min-width: 20rem;
                 font-size: 100%;
             }
         </style>
@@ -70,7 +71,7 @@
             const $input = document.querySelector(".waavy__input");
 
             const borderBottom = [];
-            const resolution = 100;
+            const resolution = 300;
             const initialTime = -Math.PI / 2;
 
             let focused = false;
@@ -130,7 +131,7 @@
 
                 update() {
                     if (focused) {
-                        const sinY = sin(this.x / resolution - time) * 15;
+                        const sinY = sin(this.x / 100 - time) * 15;
 
                         this.y = lerp(
                             this.y,
@@ -146,6 +147,7 @@
                     const prevPoint = borderBottom[this.i - 1];
                     if (prevPoint) {
                         stroke(0);
+                        strokeWeight(2);
                         line(prevPoint.x, prevPoint.y, this.x, this.y);
                     }
                 }
