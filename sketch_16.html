@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8" />
+        <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+        <link
+            rel="icon"
+            href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🎯</text></svg>"
+        />
+        <title>Sketch 16: Waavy Input</title>
+
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.4.0/p5.min.js"></script>
+        <!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.9.0/gsap.min.js"></script> -->
+        <!-- <script src="https://unpkg.com/p5.createloop@0.2.8/dist/p5.createloop.js"></script> -->
+        <script src="/globals/utils.js"></script>
+
+        <style>
+            html,
+            body {
+                height: 100%;
+                width: 100%;
+                padding: 0;
+                margin: 0;
+                box-sizing: border-box;
+            }
+
+            *,
+            ::before,
+            ::after {
+                box-sizing: inherit;
+            }
+
+            body {
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                flex-direction: column;
+            }
+
+            .waavy {
+                display: flex;
+                flex-direction: column;
+                position: relative;
+            }
+
+            .waavy > canvas {
+                position: absolute;
+                bottom: 0;
+                pointer-events: none;
+            }
+
+            .waavy__input {
+                outline: none;
+                border: none;
+                padding: 2rem;
+                font-size: 100%;
+            }
+        </style>
+    </head>
+    <body>
+        <div id="root">
+            <div class="waavy" id="waavy">
+                <input class="waavy__input" type="text" />
+            </div>
+        </div>
+
+        <script>
+            const $input = document.querySelector(".waavy__input");
+
+            const borderBottom = [];
+            const resolution = 100;
+            const initialTime = -Math.PI / 2;
+
+            let focused = false;
+            let time = initialTime;
+
+            // p5.js setup function
+            function setup() {
+                // prettier-ignore
+                const $canvas = createCanvas($input.clientWidth, $input.clientHeight);
+                $canvas.parent("waavy");
+
+                $input.addEventListener("focus", () => {
+                    focused = true;
+                    time = initialTime;
+                });
+
+                $input.addEventListener("blur", () => {
+                    focused = false;
+                    time = initialTime;
+                });
+
+                for (let i = 0; i < resolution; i++) {
+                    borderBottom.push(
+                        new Point({
+                            i,
+                            x: lerp(0, width, (i + 0.5) / resolution),
+                        })
+                    );
+                }
+            }
+
+            // p5.js draw function
+            function draw() {
+                clear();
+
+                borderBottom.forEach((point) => point.update());
+                borderBottom.forEach((point) => point.draw());
+
+                if (focused && time < PI) {
+                    time += 0.2;
+                } else {
+                    focused = false;
+                    time = 0;
+                }
+            }
+
+            // p5.js new sketch
+            function keyPressed() {}
+
+            class Point {
+                constructor({ i, x }) {
+                    this.i = i;
+                    this.x = x;
+                    this.y = height - 20;
+                    this.baseY = this.y;
+                }
+
+                update() {
+                    if (focused) {
+                        const sinY = sin(this.x / resolution - time) * 15;
+
+                        this.y = lerp(
+                            this.y,
+                            this.baseY - (sinY > 0 ? sinY : 0),
+                            0.1
+                        );
+                    } else {
+                        this.y = lerp(this.y, this.baseY, 0.1);
+                    }
+                }
+
+                draw() {
+                    const prevPoint = borderBottom[this.i - 1];
+                    if (prevPoint) {
+                        stroke(0);
+                        line(prevPoint.x, prevPoint.y, this.x, this.y);
+                    }
+                }
+            }
+        </script>
+    </body>
+</html>
