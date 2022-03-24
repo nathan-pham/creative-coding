@@ -11,62 +11,8 @@
         />
         <title>Creative Coding Sketches</title>
 
-        <style>
-            @import url("https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap");
-
-            html,
-            body {
-                height: 100%;
-                width: 100%;
-                padding: 0;
-                margin: 0;
-                box-sizing: border-box;
-                font-family: "Roboto", sans-serif;
-            }
-
-            *,
-            ::before,
-            ::after {
-                box-sizing: inherit;
-            }
-
-            .wrapper {
-                max-width: 50rem;
-                margin: 0 auto;
-                padding: 0 2rem;
-            }
-
-            .wrapper__title {
-                margin: 2rem 0 0 0;
-                font-size: 3rem;
-            }
-
-            .wrapper__subtitle {
-                margin: 0.5rem 0 0 0;
-                font-size: 1.125rem;
-                color: #999;
-            }
-
-            .wrapper__list {
-                margin: 2rem 0 0 0;
-                font-size: 1.125rem;
-                padding: 0;
-                list-style: none;
-            }
-
-            .wrapper__list__item a {
-                color: #0070f3;
-                text-decoration: none;
-            }
-
-            .wrapper__list__item a:hover {
-                text-decoration: underline;
-            }
-
-            .footnote {
-                color: #999;
-            }
-        </style>
+        <link rel="stylesheet" href="globals/index.css" />
+        <script src="/globals/index.js" type="module"></script>
     </head>
     <body>
         <main class="wrapper">
@@ -76,60 +22,9 @@
                 components
             </p>
 
-            <ul class="wrapper__list">
-                <li class="wrapper__list__item">
-                    <a href="/sketch_01.html">Sketch 01: Atomic Fishes</a>
-                </li>
-                <li class="wrapper__list__item">
-                    <a href="/sketch_02.html">Sketch 02: Drawn Lines</a>
-                </li>
-                <li class="wrapper__list__item">
-                    <a href="/sketch_03.html">Sketch 03: Circular Death</a>
-                </li>
-                <li class="wrapper__list__item">
-                    <a href="/sketch_04.html">Sketch 04: Pyramids</a>
-                </li>
-                <li class="wrapper__list__item">
-                    <a href="/sketch_05.html">Sketch 05: Shifting Sands</a>
-                    <span class="footnote">(personal favorite)</span>
-                </li>
-                <li class="wrapper__list__item">
-                    <a href="/sketch_06.html">Sketch 06: Returning Spheres</a>
-                </li>
-                <li class="wrapper__list__item">
-                    <a href="/sketch_07.html">Sketch 07: Asteroid</a>
-                </li>
-                <li class="wrapper__list__item">
-                    <a href="/sketch_08.html">Sketch 08: Creative Link</a>
-                </li>
-                <li class="wrapper__list__item">
-                    <a href="/sketch_09.html">Sketch 09: Slick Link</a>
-                </li>
-                <li class="wrapper__list__item">
-                    <a href="/sketch_10.html">Sketch 10: Origin Lines</a>
-                </li>
-                <li class="wrapper__list__item">
-                    <a href="/sketch_11.html">Sketch 11: Landscape</a>
-                </li>
-                <li class="wrapper__list__item">
-                    <a href="/sketch_12.html">Sketch 12: Flow Fields</a>
-                </li>
-                <li class="wrapper__list__item">
-                    <a href="/sketch_13.html">Sketch 13: Sunset</a>
-                </li>
-                <li class="wrapper__list__item">
-                    <a href="/sketch_14.html">Sketch 14: Fluid Grid</a>
-                </li>
-                <li class="wrapper__list__item">
-                    <a href="/sketch_15.html">Sketch 15: Camo</a>
-                </li>
-                <li class="wrapper__list__item">
-                    <a href="/sketch_16.html">Sketch 16: Waavy Input</a>
-                </li>
-                <li class="wrapper__list__item">
-                    <a href="/sketch_16.html">Sketch 17: Rainbow Road</a>
-                </li>
-            </ul>
+            <ul class="wrapper__list"></ul>
+
+            <footer class="footer">Nathan Pham</footer>
         </main>
     </body>
 </html>

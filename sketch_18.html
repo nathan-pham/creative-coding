@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8" />
+        <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+        <link
+            rel="icon"
+            href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🎯</text></svg>"
+        />
+        <title>Sketch 18: More Lines</title>
+
+        <link rel="stylesheet" href="/globals/style.css" />
+
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.4.0/p5.min.js"></script>
+        <!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.9.0/gsap.min.js"></script> -->
+        <!-- <script src="https://unpkg.com/p5.createloop@0.2.8/dist/p5.createloop.js"></script> -->
+        <script src="/globals/utils.js"></script>
+    </head>
+    <body>
+        <script>
+            let palette = [];
+            let lines = [];
+
+            let weight = 10;
+            let linesLength = 500;
+
+            // p5.js setup function
+            function setup() {
+                createCanvas(700, 700);
+
+                palette = shuffle(random(colors));
+
+                lines = new Array(linesLength).fill(0).map((_) => new Line());
+
+                lines.forEach((line) => {
+                    line.draw();
+                    background("rgba(0, 0, 0, 0.1)");
+                });
+            }
+
+            // p5.js new sketch
+            function keyPressed() {
+                if (keyCode == 32) {
+                    setup();
+                }
+            }
+
+            class Line {
+                constructor() {
+                    this.coord1 = createVector(0, random(height));
+                    this.coord2 = createVector(width, random(height));
+                }
+
+                draw() {
+                    stroke(random(palette));
+                    strokeWeight(weight);
+                    line(
+                        this.coord1.x,
+                        this.coord1.y,
+                        this.coord2.x,
+                        this.coord2.y
+                    );
+
+                    for (let i = -4; i < 4; i++) {
+                        stroke(random(palette));
+                        strokeWeight(weight);
+                        line(
+                            this.coord1.x,
+                            this.coord1.y + i * weight,
+                            this.coord2.x,
+                            this.coord2.y + i * weight
+                        );
+                    }
+                }
+            }
+        </script>
+    </body>
+</html>
