@@ -24,7 +24,7 @@
             let lines = [];
 
             let weight = 10;
-            let linesLength = 500;
+            let linesLength = 100;
 
             // p5.js setup function
             function setup() {
@@ -54,15 +54,6 @@
                 }
 
                 draw() {
-                    stroke(random(palette));
-                    strokeWeight(weight);
-                    line(
-                        this.coord1.x,
-                        this.coord1.y,
-                        this.coord2.x,
-                        this.coord2.y
-                    );
-
                     for (let i = -4; i < 4; i++) {
                         stroke(random(palette));
                         strokeWeight(weight);

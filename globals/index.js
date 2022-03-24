@@ -42,13 +42,15 @@ setTimeout(() => {
         const $skeleton = $skeletons[i];
         $skeleton.style.opacity = 0;
 
+        const sketchI = i + 1;
+
         $skeleton.ontransitionend = () => {
             const $li = document.createElement("li");
             $li.classList.add("wrapper__list__item");
 
             const $a = document.createElement("a");
-            $a.href = `/sketch_${i.toString().padStart(2, "0")}.html`;
-            $a.innerText = `Sketch ${i + 1}: ${sketches[i]}`;
+            $a.href = `/sketch_${sketchI.toString().padStart(2, "0")}.html`;
+            $a.innerText = `Sketch ${sketchI}: ${sketches[i]}`;
             $li.appendChild($a);
 
             $skeleton.replaceWith($li);
