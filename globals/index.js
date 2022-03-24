@@ -27,10 +27,7 @@ sketches.forEach((sketch) => {
     $skeleton.classList.add("skeleton");
     $skeleton.style.setProperty(
         "--width",
-        `${
-            ((sketch.length + "Sketch 00: ".length) * 10000) /
-            $wrapperList.offsetWidth
-        }px`
+        `${((sketch.length + "Sketch 00: ".length) * 12500) / innerWidth}px`
     );
 
     $wrapperList.appendChild($skeleton);
