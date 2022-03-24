@@ -22,7 +22,7 @@ const sketches = [
 const $wrapperList = document.querySelector(".wrapper__list");
 const $skeletons = [];
 
-sketches.forEach((sketch, i) => {
+sketches.forEach((sketch) => {
     const $skeleton = document.createElement("div");
     $skeleton.classList.add("skeleton");
     $skeleton.style.setProperty(

@@ -37,6 +37,7 @@ body {
     font-size: 1.125rem;
     padding: 0;
     list-style: none;
+    width: 100%;
 }
 
 .wrapper__list__item {
@@ -64,8 +65,8 @@ body {
     opacity: 1;
 
     border-radius: 0.25rem;
-    height: 21.5px;
-    margin-bottom: 0.4rem;
+    height: 20px;
+    margin-bottom: calc(0.4rem + 1.5px);
 
     width: var(--width);
     max-width: 100%;
