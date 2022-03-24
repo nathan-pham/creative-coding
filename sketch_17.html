@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8" />
+        <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+        <link
+            rel="icon"
+            href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🎯</text></svg>"
+        />
+        <title>Sketch 17: Rainbow Road</title>
+
+        <link rel="stylesheet" href="/globals/style.css" />
+
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.4.0/p5.min.js"></script>
+        <!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.9.0/gsap.min.js"></script> -->
+        <!-- <script src="https://unpkg.com/p5.createloop@0.2.8/dist/p5.createloop.js"></script> -->
+        <script src="/globals/utils.js"></script>
+    </head>
+    <body>
+        <script>
+            let bg;
+            let palette = [];
+            let bars = [];
+            let time = 0;
+
+            const barsLength = 500;
+
+            // p5.js setup function
+            function setup() {
+                createCanvas(windowWidth, windowHeight);
+
+                [bg, ...palette] = shuffle(random(colors));
+                bars = [];
+                const offset = random(-1000, 1000);
+
+                bars = new Array(barsLength).fill(0).map(
+                    (_, i) =>
+                        new Bar({
+                            i,
+                            y: lerp(0, height, i / barsLength),
+                            color: bg,
+                        })
+                );
+            }
+
+            // p5.js draw function
+            function draw() {
+                background(bg);
+
+                bars.forEach((bar) => bar.update());
+                bars.forEach((bar) => bar.draw());
+
+                time += 0.05;
+            }
+
+            // p5.js new sketch
+            function keyPressed() {
+                if (keyCode == 32) {
+                    setup();
+                }
+            }
+
+            class Bar {
+                constructor({ i, y, color }) {
+                    this.i = i;
+                    this.y = y;
+                    this.color = color;
+                    this.length = 0;
+                }
+
+                update() {
+                    this.length =
+                        (sin((this.i * 2) / barsLength + time) * width) / 4 +
+                        width / 2;
+
+                    this.color = lerpColor(
+                        color(this.color),
+                        color(
+                            palette[floor(time + this.i / 100) % palette.length]
+                        ),
+                        0.25
+                    );
+                }
+
+                draw() {
+                    // const length =
+
+                    fill(this.color);
+                    noStroke();
+                    rect(0, this.y, this.length, ceil(height / barsLength));
+                }
+            }
+        </script>
+    </body>
+</html>

@@ -20,3 +20,4 @@ Random ass 2D experiments, probably should be on Codepen
 -   [Sketch 14: Fluid Grid](sketch_14.html)
 -   [Sketch 15: Camo](sketch_15.html)
 -   [Sketch 16: Waavy Input](sketch_16.html)
+-   [Sketch 17: Rainbow Road](sketch_17.html)
