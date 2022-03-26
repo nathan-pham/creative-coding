@@ -17,6 +17,7 @@ const sketches = [
     "Waavy Input",
     "Rainbow Road",
     "Depth Lines",
+    "Scales",
 ];
 
 const $wrapperList = document.querySelector(".wrapper__list");

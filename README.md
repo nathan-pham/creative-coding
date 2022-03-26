@@ -22,3 +22,4 @@ Random ass 2D experiments, probably should be on Codepen
 -   [Sketch 16: Waavy Input](sketch_16.html)
 -   [Sketch 17: Rainbow Road](sketch_17.html)
 -   [Sketch 18: Depth Lines](sketch_18.html)
+-   [Sketch 19: Scales](sketch_19.html)
