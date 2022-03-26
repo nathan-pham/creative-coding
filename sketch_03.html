@@ -1,71 +1,92 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="utf-8" />
-    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <head>
+        <meta charset="utf-8" />
+        <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
-    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🎯</text></svg>" />
-    <title>Sketch 03: Circular Death</title>
+        <link
+            rel="icon"
+            href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🎯</text></svg>"
+        />
+        <title>Sketch 03: Water Flower</title>
 
-    <link rel="stylesheet" href="/globals/style.css" />
+        <link rel="stylesheet" href="/globals/style.css" />
 
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.9.0/gsap.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.4.0/p5.min.js"></script>
-    <script src="/globals/utils.js"></script>
-</head>
-<body>
-    <script>
+        <!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.9.0/gsap.min.js"></script> -->
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.4.0/p5.min.js"></script>
+        <script src="/globals/utils.js"></script>
+    </head>
+    <body>
+        <script>
+            let bg;
+            let palette = [];
 
-        let centerX, centerY
-        let radius = { value: 30 }
-        let angle = 0
+            let centerX, centerY;
 
-        function setup() {
+            let radius, maxRadius, radiusDir;
+            let angle = 0;
 
-            // initialize canvas
-            createCanvas(600, 600)
-            background(255)
+            function setup() {
+                angle = 0;
+                radius = 0;
+                radiusDir = 1;
+                maxRadius = 200;
 
-            centerX = width / 2
-            centerY = height / 2
+                createCanvas(600, 600);
 
-            gsap.fromTo(radius, { value: 0 }, {
-                value: 30,
-                duration: 0.25,
-                ease: Expo.easeInOut,
-                yoyo: true,
-                repeat: -1
-            })
+                [bg, ...palette] = shuffle(random(colors)).map((c) => color(c));
 
-        }
+                centerX = width / 2;
+                centerY = height / 2;
 
-        function draw() {
+                background(bg);
+            }
 
-            background("rgba(255, 255, 255, 0.1)")
+            function draw() {
+                angle += random() / 100;
+                radius += radiusDir;
 
-            angle += 1
+                if (radius >= maxRadius || radius <= 0) {
+                    radiusDir *= -1;
+                }
 
-            fill(0)
+                noStroke();
+                fill(
+                    lerpColor(
+                        palette[floor(angle) % palette.length],
+                        palette[floor(angle + 1) % palette.length],
+                        angle % 1
+                    )
+                );
 
-            const x1 = (centerX) + radius.value * cos(-angle * PI / 180) * 5
-            const y1 = (centerY) + radius.value * sin(-angle * PI / 180) * 5
+                const coord1 = createVector(
+                    centerX + radius * cos((-angle * PI * 100) / 180),
+                    centerY + radius * sin((-angle * PI * 100) / 180)
+                );
 
-            const x2 = (centerX) - (x1 - (centerX))
-            const y2 = (centerY) - (y1 - (centerY))
+                const coord2 = createVector(
+                    centerX - (coord1.x - centerX),
+                    centerY - (coord1.y - centerY)
+                );
 
-            circle(x1, y1, 5)
-            circle(x2, y2, 5)
+                circle(coord1.x, coord1.y, 30);
+                circle(coord2.x, coord2.y, 30);
 
-            // line(x1, y1, x2, y2)
+                if (
+                    angle >= 16 &&
+                    dist(coord1.x, coord1.y, coord2.x, coord2.y) < 10
+                ) {
+                    noLoop();
+                }
+            }
 
-        }
-
-
-        function mouseClicked() {
-            saveCanvas("sketch_03", "jpg")
-        }
-
-    </script>
-</body>
+            // p5.js new sketch
+            function keyPressed() {
+                if (keyCode == 32) {
+                    setup();
+                }
+            }
+        </script>
+    </body>
 </html>

@@ -1,7 +1,7 @@
 const sketches = [
     "Atomic Fishes",
     "Drawn Lines",
-    "Circular Death",
+    "Water Flower",
     "Pyramids",
     "Shifting Sands",
     "Returning Spheres",
