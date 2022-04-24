@@ -20,7 +20,7 @@
         <script>
             const planetsLength = 0;
             let orbitSpeed = 0.1;
-            let maxSpeed = 10;
+            let maxSpeed = 20;
 
             let bg;
             let palette = [];
@@ -146,7 +146,8 @@
                             planet.pos,
                             this.pos
                         ).setMag(
-                            (orbitSpeed * (planet.radius + this.radius)) /
+                            (orbitSpeed *
+                                (planet.radius * 2 + this.radius * 2)) /
                                 Math.pow(this.radius, 2)
                         );
 
