@@ -18,12 +18,20 @@
     </head>
     <body>
         <script>
-            const planetsLength = 5;
-            let orbitSpeed = 0.05;
+            const planetsLength = 0;
+            let orbitSpeed = 0.1;
+            let maxSpeed = 10;
 
             let bg;
             let palette = [];
             let planets = [];
+
+            let maxSize = 200;
+            let prevSize = 10;
+            let size = 10;
+
+            let prevMouse;
+            let mouseDown = false;
 
             // p5.js setup function
             function setup() {
@@ -39,27 +47,9 @@
                         })
                 );
 
-                // for (let i = 0; i < planets.length; i++) {
-                //     for (let j = 0; j < planets.length; j++) {
-                //         const planetA = planets[i];
-                //         const planetB = planets[j];
-
-                //         if (planetA !== planetB) {
-                //             while (
-                //                 planetA.pos.dist(planetB.pos) <
-                //                 planetA.radius + planetB.radius
-                //             ) {
-                //                 planetA.pos = createVector(
-                //                     random(width),
-                //                     random(height)
-                //                 );
-                //             }
-                //         }
-                //     }
-                //     // planets[i].setOrbit(planets);
-                // }
-
                 bg = bg + "5F";
+
+                prevMouse = createVector(0, 0);
             }
 
             function draw() {
@@ -67,6 +57,18 @@
 
                 planets.forEach((planet) => planet.update());
                 planets.forEach((planet) => planet.draw());
+
+                size = lerp(size, prevSize, 0.1);
+
+                noStroke();
+                fill(255);
+                rect(0, 0, map(size, 0, maxSize, 0, width), 20);
+
+                if (mouseDown) {
+                    stroke(255);
+                    strokeWeight(2);
+                    line(mouseX, mouseY, prevMouse.x, prevMouse.y);
+                }
             }
 
             // p5.js new sketch
@@ -78,37 +80,50 @@
 
             function mousePressed() {
                 if (mouseButton == LEFT) {
-                    planets.push(
-                        new Planet({
-                            color: random(palette),
-                            pos: createVector(mouseX, mouseY),
-                            fixed: false,
-                        })
-                    );
+                    prevMouse = createVector(mouseX, mouseY);
+                    mouseDown = true;
                 } else if (mouseButton == RIGHT) {
                     planets.push(
                         new Planet({
                             color: "#000",
                             pos: createVector(mouseX, mouseY),
                             fixed: true,
-                            size: 50,
                         })
                     );
                 }
             }
 
+            function mouseReleased() {
+                if (mouseButton == LEFT) {
+                    planets.push(
+                        new Planet({
+                            color: random(palette),
+                            pos: prevMouse.copy(),
+                            // use prevMouse & current mouse to calculate velocity
+                            vel: prevMouse
+                                .copy()
+                                .sub(createVector(mouseX, mouseY))
+                                .mult(0.01),
+                            fixed: false,
+                        })
+                    );
+
+                    // console.log(planet[planets.length - 1]);
+
+                    prevVel = createVector(0, 0);
+                    mouseDown = false;
+                }
+            }
+
             class Planet {
-                constructor({ color, pos, fixed, size }) {
+                constructor({ color, pos, vel, fixed }) {
                     this.pos =
                         pos || createVector(random(width), random(height));
-                    this.vel = createVector(
-                        random(-1, 1),
-                        random(-1, 1)
-                    ).setMag(random(1, 2));
+                    this.vel = vel || createVector(0, 0);
                     this.acc = createVector(0, 0);
 
                     this.color = color;
-                    this.radius = size || random(7, 40);
+                    this.radius = size;
 
                     this.prevPos = this.pos.copy();
                     this.fixed = fixed;
@@ -121,44 +136,26 @@
 
                     this.prevPos = this.pos.copy();
 
-                    const speed = orbitSpeed / (this.radius / 6);
-
-                    // point to center for stable orbit
-                    // const origin = createVector(width / 2, height / 2);
-                    // const dir = p5.Vector.sub(origin, this.pos)
-                    //     .setMag(speed)
-                    //     .add(speed / 2, 0);
-
-                    // this.acc.add(dir);
-
                     // get affected by neighboring bodies
                     for (const planet of planets) {
                         if (planet === this) continue;
 
-                        const dist = p5.Vector.dist(this.pos, planet.pos) / 100;
+                        // const dist =
+                        //     p5.Vector.dist(this.pos, planet.pos) * 0.007;
                         const force = p5.Vector.sub(
                             planet.pos,
                             this.pos
-                        ).setMag(speed / dist);
+                        ).setMag(
+                            (orbitSpeed * (planet.radius + this.radius)) /
+                                Math.pow(this.radius, 2)
+                        );
 
                         this.acc.add(force);
                     }
 
-                    // for (const planet of planets) {
-                    //     if (this === planet && !this.fixed) continue;
-
-                    //     const dist = p5.Vector.dist(
-                    //         this.pos.copy().add(this.vel),
-                    //         planet.pos
-                    //     );
-
-                    //     if (dist < this.radius + planet.radius) {
-                    //         this.acc.mult(0);
-                    //         this.vel.mult(0);
-                    //     }
-                    // }
-
                     this.vel.add(this.acc);
+                    this.vel.limit(maxSpeed);
+
                     this.pos.add(this.vel);
 
                     this.acc.mult(0);
@@ -179,6 +176,10 @@
                     noStroke();
                     ellipse(this.pos.x, this.pos.y, this.radius * 2);
                 }
+            }
+
+            function mouseWheel(e) {
+                prevSize = constrain(prevSize + e.delta / 30, 0, maxSize);
             }
 
             document.body.oncontextmenu = () => {
