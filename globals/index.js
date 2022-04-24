@@ -18,6 +18,7 @@ const sketches = [
     "Rainbow Road",
     "Depth Lines",
     "Scales",
+    "Galaxy",
 ];
 
 const $wrapperList = document.querySelector(".wrapper__list");

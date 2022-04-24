@@ -9,34 +9,64 @@
             rel="icon"
             href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🎯</text></svg>"
         />
-        <title>Sketch 19: Squarecursion</title>
+        <title>Sketch 20: Galaxy</title>
 
         <link rel="stylesheet" href="/globals/style.css" />
 
         <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.4.0/p5.min.js"></script>
-        <!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.9.0/gsap.min.js"></script> -->
-        <!-- <script src="https://unpkg.com/p5.createloop@0.2.8/dist/p5.createloop.js"></script> -->
         <script src="/globals/utils.js"></script>
     </head>
     <body>
         <script>
+            const planetsLength = 5;
+            let orbitSpeed = 0.05;
+
             let bg;
             let palette = [];
-
-            let squareCursion;
+            let planets = [];
 
             // p5.js setup function
             function setup() {
-                createCanvas(700, 700);
+                createCanvas(innerWidth, innerHeight);
 
                 [bg, ...palette] = shuffle(random(colors));
+
+                planets = new Array(planetsLength).fill(0).map(
+                    () =>
+                        new Planet({
+                            color: random(palette),
+                            pos: createVector(random(width), random(height)),
+                        })
+                );
+
+                // for (let i = 0; i < planets.length; i++) {
+                //     for (let j = 0; j < planets.length; j++) {
+                //         const planetA = planets[i];
+                //         const planetB = planets[j];
+
+                //         if (planetA !== planetB) {
+                //             while (
+                //                 planetA.pos.dist(planetB.pos) <
+                //                 planetA.radius + planetB.radius
+                //             ) {
+                //                 planetA.pos = createVector(
+                //                     random(width),
+                //                     random(height)
+                //                 );
+                //             }
+                //         }
+                //     }
+                //     // planets[i].setOrbit(planets);
+                // }
+
+                bg = bg + "5F";
             }
 
             function draw() {
                 background(bg);
 
-                // squares.forEach((square) => square.update());
-                // squares.forEach((square) => square.draw());
+                planets.forEach((planet) => planet.update());
+                planets.forEach((planet) => planet.draw());
             }
 
             // p5.js new sketch
@@ -46,9 +76,114 @@
                 }
             }
 
-            class SquareCursion {
-                constructor() {}
+            function mousePressed() {
+                if (mouseButton == LEFT) {
+                    planets.push(
+                        new Planet({
+                            color: random(palette),
+                            pos: createVector(mouseX, mouseY),
+                            fixed: false,
+                        })
+                    );
+                } else if (mouseButton == RIGHT) {
+                    planets.push(
+                        new Planet({
+                            color: "#000",
+                            pos: createVector(mouseX, mouseY),
+                            fixed: true,
+                            size: 50,
+                        })
+                    );
+                }
             }
+
+            class Planet {
+                constructor({ color, pos, fixed, size }) {
+                    this.pos =
+                        pos || createVector(random(width), random(height));
+                    this.vel = createVector(
+                        random(-1, 1),
+                        random(-1, 1)
+                    ).setMag(random(1, 2));
+                    this.acc = createVector(0, 0);
+
+                    this.color = color;
+                    this.radius = size || random(7, 40);
+
+                    this.prevPos = this.pos.copy();
+                    this.fixed = fixed;
+                }
+
+                update() {
+                    if (this.fixed) {
+                        return;
+                    }
+
+                    this.prevPos = this.pos.copy();
+
+                    const speed = orbitSpeed / (this.radius / 6);
+
+                    // point to center for stable orbit
+                    // const origin = createVector(width / 2, height / 2);
+                    // const dir = p5.Vector.sub(origin, this.pos)
+                    //     .setMag(speed)
+                    //     .add(speed / 2, 0);
+
+                    // this.acc.add(dir);
+
+                    // get affected by neighboring bodies
+                    for (const planet of planets) {
+                        if (planet === this) continue;
+
+                        const dist = p5.Vector.dist(this.pos, planet.pos) / 100;
+                        const force = p5.Vector.sub(
+                            planet.pos,
+                            this.pos
+                        ).setMag(speed / dist);
+
+                        this.acc.add(force);
+                    }
+
+                    // for (const planet of planets) {
+                    //     if (this === planet && !this.fixed) continue;
+
+                    //     const dist = p5.Vector.dist(
+                    //         this.pos.copy().add(this.vel),
+                    //         planet.pos
+                    //     );
+
+                    //     if (dist < this.radius + planet.radius) {
+                    //         this.acc.mult(0);
+                    //         this.vel.mult(0);
+                    //     }
+                    // }
+
+                    this.vel.add(this.acc);
+                    this.pos.add(this.vel);
+
+                    this.acc.mult(0);
+                }
+
+                draw() {
+                    stroke(this.color);
+                    strokeWeight(this.radius * 2);
+
+                    line(
+                        this.prevPos.x,
+                        this.prevPos.y,
+                        this.pos.x,
+                        this.pos.y
+                    );
+
+                    fill(this.color);
+                    noStroke();
+                    ellipse(this.pos.x, this.pos.y, this.radius * 2);
+                }
+            }
+
+            document.body.oncontextmenu = () => {
+                return false;
+            };
         </script>
     </body>
 </html>
