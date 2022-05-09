@@ -19,6 +19,7 @@ const sketches = [
     "Depth Lines",
     "Scales",
     "Galaxy",
+    "Roe v Wade",
 ];
 
 const $wrapperList = document.querySelector(".wrapper__list");

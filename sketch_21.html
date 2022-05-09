@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8" />
+        <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+        <link
+            rel="icon"
+            href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🎯</text></svg>"
+        />
+        <title>Sketch 21: Roe v Wade</title>
+
+        <link rel="stylesheet" href="/globals/style.css" />
+
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.4.0/p5.min.js"></script>
+        <script src="/globals/utils.js"></script>
+    </head>
+    <body>
+        <script>
+            let bg;
+            let palette = [];
+
+            let particles = [];
+
+            // config
+            const thickness = 40;
+            const circleRadius = 175;
+            const rectHeight = 190;
+            const particleCount = 1750;
+
+            // p5.js setup function
+            function setup() {
+                createCanvas(800, 800);
+
+                [bg, ...palette] = shuffle(random(colors));
+                particles = new Array(particleCount)
+                    .fill(0)
+                    .map(
+                        (_) =>
+                            new Particle(
+                                random(width / 2 + thickness / 2, width),
+                                random(109, 670)
+                            )
+                    );
+            }
+
+            function draw() {
+                background(bg);
+
+                const x = width / 2;
+                const y = height / 2 - rectHeight / 2;
+
+                // circle component
+                stroke(palette[0]);
+                strokeWeight(thickness);
+                noFill();
+                circle(x, y, circleRadius * 2);
+
+                // cross
+                noStroke();
+                fill(palette[0]);
+                rect(
+                    x - thickness / 2,
+                    y + circleRadius,
+                    thickness,
+                    rectHeight
+                );
+
+                rect(
+                    x - rectHeight / 2,
+                    y + circleRadius + rectHeight / 2 - thickness / 2,
+                    rectHeight,
+                    thickness
+                );
+
+                // cut symbol in half
+                fill(bg);
+                rect(width / 2 + thickness / 2, 0, width, height);
+
+                // circle(x, y, circleRadius * 2 - thickness);
+
+                particles.forEach((particle) => {
+                    if (
+                        pow(particle.x - x, 2) + pow(particle.y - y, 2) <
+                        pow(circleRadius - thickness / 2, 2)
+                    ) {
+                        particle.dead = true;
+                    }
+
+                    particle.render();
+                });
+
+                // fill(bg);
+            }
+
+            class Particle {
+                constructor(x, y) {
+                    this.x = x;
+                    this.y = y;
+                    this.r = random(3, 5);
+
+                    this.dead = false;
+
+                    this.y += map(
+                        this.x,
+                        width / 2 + thickness / 2,
+                        width,
+                        0,
+                        120
+                    );
+
+                    this.r = map(
+                        this.x,
+                        width / 2 + thickness / 2,
+                        width,
+                        5,
+                        1.5
+                    );
+
+                    this.x += this.r / 2;
+                    //   this.x += map(this.y, 105, 675, 0, 100);
+                }
+
+                render() {
+                    if (!this.dead) {
+                        fill(palette[0]);
+                        circle(this.x, this.y, this.r);
+                    }
+                }
+            }
+
+            // p5.js new sketch
+            function keyPressed() {
+                if (keyCode == 32) {
+                    setup();
+                }
+            }
+        </script>
+    </body>
+</html>
