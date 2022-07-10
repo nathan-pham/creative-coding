@@ -19,7 +19,7 @@
     <body>
         <script>
             let bg;
-            let palette = [];
+            let palette;
 
             let particles = [];
 
@@ -33,7 +33,11 @@
             function setup() {
                 createCanvas(800, 800);
 
-                [bg, ...palette] = shuffle(random(colors));
+                [bg, palette] = shuffle(random(colors));
+
+                bg = "#fff";
+                palette = "#ea4368";
+
                 particles = new Array(particleCount)
                     .fill(0)
                     .map(
@@ -52,14 +56,14 @@
                 const y = height / 2 - rectHeight / 2;
 
                 // circle component
-                stroke(palette[0]);
+                stroke(palette);
                 strokeWeight(thickness);
                 noFill();
                 circle(x, y, circleRadius * 2);
 
                 // cross
                 noStroke();
-                fill(palette[0]);
+                fill(palette);
                 rect(
                     x - thickness / 2,
                     y + circleRadius,
@@ -119,12 +123,11 @@
                     );
 
                     this.x += this.r / 2;
-                    //   this.x += map(this.y, 105, 675, 0, 100);
                 }
 
                 render() {
                     if (!this.dead) {
-                        fill(palette[0]);
+                        fill(palette);
                         circle(this.x, this.y, this.r);
                     }
                 }

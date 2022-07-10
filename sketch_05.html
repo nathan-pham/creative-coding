@@ -1,111 +1,122 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="utf-8" />
-    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <head>
+        <meta charset="utf-8" />
+        <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
-    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🎯</text></svg>" />
-    <title>Sketch 05: Shifting Sands</title>
+        <link
+            rel="icon"
+            href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🎯</text></svg>"
+        />
+        <title>Sketch 05: Shifting Sands</title>
 
-    <link rel="stylesheet" href="/globals/style.css" />
+        <link rel="stylesheet" href="/globals/style.css" />
 
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.9.0/gsap.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.4.0/p5.min.js"></script>
-    <script src="/globals/utils.js"></script>
-</head>
-<body>
-    <script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.9.0/gsap.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.4.0/p5.min.js"></script>
+        <script src="/globals/utils.js"></script>
+    </head>
+    <body>
+        <script>
+            // initialize variables
+            const segments = 6;
 
-        // initialize variables
-        const segments = 6
+            let rectangles = [];
+            let palette = [];
 
-        let rectangles = []
-        let palette = []
+            // p5.js setup function
+            function setup() {
+                createCanvas(500, 500);
 
-        // p5.js setup function 
-        function setup() {
+                // initialize random palette
+                palette = random(colors);
 
-            createCanvas(500, 500)
+                background("#fff");
 
-            // initialize random palette
-            palette = random(colors)
+                for (let x = 0; x < segments; x++) {
+                    for (let y = 0; y < segments; y++) {
+                        const _x = (x * width) / segments;
+                        const _y = (y * height) / segments;
+                        const _r = width / segments;
 
-            background("#fff")
+                        rectangles.push({
+                            x: _x,
+                            y: _y,
+                            width: random() > 0.5 ? _r * 2 : _r,
+                            height: random() > 0.5 ? _r * 2 : _r,
+                            color: random(palette),
+                        });
 
-            for(let x = 0; x < segments; x++) {
-                for(let y = 0; y < segments; y++) {
+                        // fill(random(palette))
+                        // rect(_x, _y, _x + _r, _y + _r)
+                    }
+                }
 
-                    const _x = x * width / segments
-                    const _y = y * height / segments
-                    const _r = (width / segments)
+                const shared = {
+                    yoyo: true,
+                    repeat: -1,
+                    duration: 2,
+                    ease: Expo.easeInOut,
+                };
 
-                    rectangles.push({
-                        x: _x,
-                        y: _y,
-                        width: random() > 0.5 ? _r * 2 : _r,
-                        height: random() > 0.5 ? _r * 2 : _r,
-                        color: random(palette)
-                    })
+                for (const rectangle of rectangles) {
+                    const type = floor(random(0, 3));
 
-                    // fill(random(palette))
-                    // rect(_x, _y, _x + _r, _y + _r)
-
+                    if (type == 0) {
+                        gsap.fromTo(
+                            rectangle,
+                            { width: rectangle.width },
+                            {
+                                width: -rectangle.width,
+                                delay: random(-5, 5),
+                                ...shared,
+                            }
+                        );
+                    } else if (type == 1) {
+                        gsap.fromTo(
+                            rectangle,
+                            { height: rectangle.height },
+                            {
+                                height: -rectangle.height,
+                                delay: random(-5, 5),
+                                ...shared,
+                            }
+                        );
+                    }
                 }
             }
 
-            const shared = {
-                yoyo: true,
-                repeat: -1,
-                duration: 2,
-                ease: Expo.easeInOut
-            }
-            
-            for(const rectangle of rectangles) {
+            // p5.js draw function
+            function draw() {
+                noStroke();
+                background("#fff");
 
-                const type = floor(random(0, 3))
-
-                if(type == 0) {
-                    gsap.fromTo(rectangle, 
-                        { width: rectangle.width },
-                        { width: -rectangle.width, delay: random(-5, 5), ...shared }
-                    )
-                } else if(type == 1) {
-                    gsap.fromTo(rectangle, 
-                        { height: rectangle.height },
-                        { height: -rectangle.height, delay: random(-5, 5), ...shared }
-                    )
+                for (const r of rectangles) {
+                    fill(r.color);
+                    noStroke();
+                    rect(r.x, r.y, r.width, r.height);
+                    // rectangles.push({
+                    //         x: _x,
+                    //         y: _y,
+                    //         width: _r,
+                    //         height: _r,
+                    //         color: random(palette)
+                    //     })
                 }
-
             }
-        }
 
-        // p5.js draw function
-        function draw() {
+            // p5.js save function
+            // function mouseClicked() {
+            //     saveCanvas("sketch_05", "jpg")
+            // }
 
-            noStroke()
-            background("#fff")
-
-            for(const r of rectangles) {
-                fill(r.color)
-                noStroke()
-                rect(r.x, r.y, r.width, r.height)
-                // rectangles.push({
-                //         x: _x,
-                //         y: _y,
-                //         width: _r,
-                //         height: _r,
-                //         color: random(palette)
-                //     })
-
+            // p5.js new sketch
+            function keyPressed() {
+                if (keyCode == 32) {
+                    setup();
+                }
             }
-        }
-
-        // p5.js save function
-        function mouseClicked() {
-            saveCanvas("sketch_05", "jpg")
-        }
-
-    </script>
-</body>
+        </script>
+    </body>
 </html>
