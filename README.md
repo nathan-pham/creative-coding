@@ -1,6 +1,6 @@
-# Creative Coding
+# Frontend Sketches
 
-Random ass 2D experiments, probably should be on Codepen
+Standalone effects with p5.js and CSS
 
 ## Sketches
 
