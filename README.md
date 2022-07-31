@@ -1,6 +1,6 @@
-# Frontend Sketches
+# Creative Coding
 
-Standalone effects with p5.js and CSS
+Random experiments, from generative art to interactive components
 
 ## Sketches
 
