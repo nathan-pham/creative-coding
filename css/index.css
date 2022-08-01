@@ -5,14 +5,15 @@
 }
 
 .wrapper__title {
-    margin: 2rem 0 0 0;
+    margin: 3rem 0 0 0;
     font-size: 3rem;
 }
 
 .wrapper__subtitle {
-    margin: 0.5rem 0 0 0;
+    margin: 0.75rem 0 0 0;
     font-size: 1.125rem;
     color: #999;
+    line-height: 1.4;
 }
 
 .wrapper__list {
