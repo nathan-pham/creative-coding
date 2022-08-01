@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8" />
+        <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+        <link
+            rel="icon"
+            href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>📝</text></svg>"
+        />
+        <title>Sketch Template</title>
+
+        <link rel="stylesheet" href="/css/globals.css" />
+        <link rel="stylesheet" href="/css/index.css" />
+
+        <script src="/js/importmap.js"></script>
+
+        <script type="module">
+            import rough from "roughjs";
+            import "p5";
+
+            import { createGrid, createPalette, expose } from "utils";
+
+            let roughContext;
+            let points = [];
+
+            const setup = () => {
+                // initialize canvas
+                createCanvas(600, 600);
+                background(255);
+
+                roughContext = rough.canvas(document.querySelector("canvas"));
+                points = new Array(3).fill(0).map(() => new Point());
+
+                for (let i = 0; i < 400; i++) {
+                    points.forEach((point) => {
+                        point.update();
+                        point.connect();
+                    });
+                }
+            };
+
+            class Point {
+                constructor() {
+                    this.pos = createVector(random(width), random(height));
+                    this.vel = createVector(random([-1, 1]), random([-1, 1]));
+                }
+
+                update() {
+                    this.pos.add(this.vel);
+
+                    if (this.pos.x < 0 || this.pos.x > width) {
+                        this.vel.x *= -1;
+                    }
+
+                    if (this.pos.y < 0 || this.pos.y > height) {
+                        this.vel.y *= -1;
+                    }
+                }
+
+                connect() {
+                    for (const point of points) {
+                        if (point !== this) {
+                            roughContext.line(
+                                this.pos.x,
+                                this.pos.y,
+                                point.pos.x,
+                                point.pos.y,
+                                {
+                                    stroke: `rgba(0, 0, 0, 0.1)`,
+                                    roughness: 5,
+                                }
+                            );
+                        }
+                    }
+                }
+            }
+
+            expose({ setup });
+
+            // expose variables to global scope
+            Object.assign(window, { setup });
+        </script>
+    </head>
+    <body></body>
+</html>

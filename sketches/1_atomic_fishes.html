@@ -14,20 +14,13 @@
         <link rel="stylesheet" href="/css/globals.css" />
         <link rel="stylesheet" href="/css/index.css" />
 
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.4.0/p5.min.js"></script>
-
-        <script type="importmap">
-            {
-                "imports": {
-                    "utils": "/js/utils.js",
-                    "fish": "/js/1_atomic_fishes.js"
-                }
-            }
-        </script>
+        <script src="/js/importmap.js"></script>
 
         <script type="module">
-            import { createGrid, createPalette } from "utils";
-            import { Fish } from "fish";
+            import { createGrid, createPalette, expose } from "utils";
+            import "p5";
+
+            import { Fish } from "/js/1_atomic_fishes.js";
 
             // configure sketch
             const margin = 100;
@@ -123,8 +116,7 @@
                 }
             }
 
-            // expose variables to global scope
-            Object.assign(window, { margin, palette, setup });
+            expose({ margin, setup });
         </script>
     </head>
     <body></body>
