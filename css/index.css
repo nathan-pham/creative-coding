@@ -1,0 +1,59 @@
+.wrapper {
+    max-width: 50rem;
+    margin: 0 auto;
+    padding: 0 2rem;
+}
+
+.wrapper__title {
+    margin: 2rem 0 0 0;
+    font-size: 3rem;
+}
+
+.wrapper__subtitle {
+    margin: 0.5rem 0 0 0;
+    font-size: 1.125rem;
+    color: #999;
+}
+
+.wrapper__list {
+    margin: 2rem 0 0 0;
+    font-size: 1.125rem;
+    padding: 0;
+    list-style: none;
+    width: 100%;
+}
+
+.wrapper__list__item {
+    margin-bottom: 0.4rem;
+    opacity: 0;
+    transition: opacity 0.3s ease-in-out;
+}
+
+.wrapper__list__item a {
+    color: #0070f3;
+    text-decoration: none;
+}
+
+.wrapper__list__item a:hover {
+    text-decoration: underline;
+}
+
+.footnote {
+    color: #999;
+}
+
+.footer {
+    padding: 2rem;
+    text-align: center;
+    color: #999;
+}
+
+canvas {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    outline: none;
+    border: none;
+    cursor: pointer;
+}

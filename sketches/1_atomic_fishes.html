@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8" />
+        <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+        <link
+            rel="icon"
+            href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🦈</text></svg>"
+        />
+        <title>Atomic Fishes</title>
+
+        <link rel="stylesheet" href="/css/globals.css" />
+        <link rel="stylesheet" href="/css/index.css" />
+
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.4.0/p5.min.js"></script>
+
+        <script type="importmap">
+            {
+                "imports": {
+                    "utils": "/js/utils.js",
+                    "fish": "/js/1_atomic_fishes.js"
+                }
+            }
+        </script>
+
+        <script type="module">
+            import { createGrid, createPalette } from "utils";
+            import { Fish } from "fish";
+
+            // configure sketch
+            const margin = 100;
+            const palette = createPalette(3);
+
+            // setup function
+            const setup = () => {
+                // initialize canvas
+                createCanvas(600, 600);
+                background(255);
+
+                // create grid of fishes
+                const grid = createGrid(4);
+                const fishes = grid.map((pos) => {
+                    const parameters = [
+                        pos,
+                        random([20, 40]),
+                        random(palette),
+                        random(palette),
+                    ];
+
+                    return random(
+                        [SimpleFish, SpikyFish, ActualFish].map(
+                            (fish) => new fish(...parameters)
+                        )
+                    );
+                });
+
+                for (const fish of fishes) {
+                    fish.draw();
+                }
+            };
+
+            class SimpleFish extends Fish {
+                draw() {
+                    super.draw();
+                    stroke(this.outerColor);
+                    strokeWeight(1);
+                    noFill();
+                    circle(this.origin.x, this.origin.y, this.radius * 2);
+                }
+            }
+
+            class SpikyFish extends Fish {
+                draw() {
+                    super.draw();
+
+                    const spikeCount = this.radius - 10;
+                    const r = this.radius + 10;
+                    for (let i = 0; i < spikeCount; i++) {
+                        const angle = lerp(0, 2 * PI, i / spikeCount);
+                        const position = createVector(
+                            cos(angle) * r,
+                            sin(angle) * r
+                        ).add(this.origin);
+
+                        push();
+                        noStroke();
+                        fill(this.outerColor);
+                        translate(position.x, position.y);
+                        rotate(angle);
+                        rectMode(CENTER);
+                        rect(0, 0, 10, 1);
+                        pop();
+                    }
+                }
+            }
+
+            class ActualFish extends Fish {
+                draw() {
+                    super.draw();
+                    const angleOffset = random(TWO_PI);
+                    const length = 40;
+                    for (let i = 0; i < length; i++) {
+                        const angle = lerp(0, PI, i / length) + angleOffset;
+                        const position = createVector(
+                            cos(angle) * this.radius,
+                            sin(angle) * this.radius
+                        ).add(this.origin);
+
+                        noStroke();
+                        fill(this.outerColor);
+                        circle(position.x, position.y, i * 1.1 + 4);
+
+                        // if last circle, draw eye
+                        if (i == length - 1) {
+                            fill(
+                                this.outerColor == this.color ? 255 : this.color
+                            );
+                            circle(position.x, position.y, 10);
+                        }
+                    }
+                }
+            }
+
+            // expose variables to global scope
+            Object.assign(window, { margin, palette, setup });
+        </script>
+    </head>
+    <body></body>
+</html>
