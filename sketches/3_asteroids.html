@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8" />
+        <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+        <link
+            rel="icon"
+            href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🎯</text></svg>"
+        />
+        <title>Sketch Template</title>
+
+        <link rel="stylesheet" href="/css/globals.css" />
+        <link rel="stylesheet" href="/css/index.css" />
+
+        <script src="/js/importmap.js"></script>
+
+        <script type="module">
+            import { createGrid, createPalette } from "utils";
+            import p5 from "p5";
+
+            const [bg, asteroidColor, particleColor] = createPalette();
+            const spazzzzzzz = 5;
+            const radius = 200;
+            const margin = 30;
+
+            let asteroid;
+
+            const setup = () => {
+                createCanvas(500, 500);
+                background(bg);
+
+                asteroid = new Asteroid();
+            };
+
+            const draw = () => {
+                background(bg);
+                asteroid.update();
+                asteroid.draw();
+            };
+
+            class Asteroid {
+                constructor() {
+                    this.origin = createVector(
+                        width - margin - radius / 2,
+                        height - margin - radius / 2
+                    );
+
+                    this.vertices = this.generatePolygon(width / 5, width / 5);
+                    this.particles = [];
+                }
+
+                generatePolygon(
+                    minSize,
+                    maxSize,
+                    verticeCount = random(6, 10)
+                ) {
+                    const vertices = [];
+                    const spread = TWO_PI / (verticeCount + 1);
+
+                    for (let i = 0; i < verticeCount; i++) {
+                        vertices.push(
+                            p5.Vector.fromAngle(
+                                random(i * spread, (i + 1) * spread)
+                            ).mult(random(minSize, maxSize))
+                        );
+                    }
+
+                    return vertices;
+                }
+
+                update() {
+                    this.particles.push(new Particle(this));
+
+                    for (let i = this.particles.length - 1; i >= 0; i--) {
+                        const particle = this.particles[i];
+                        particle.update();
+
+                        if (particle.dead) {
+                            this.particles.splice(i, 1);
+                        }
+                    }
+                }
+
+                draw() {
+                    translate(
+                        random(-spazzzzzzz, spazzzzzzz),
+                        random(-spazzzzzzz, spazzzzzzz)
+                    );
+
+                    // draw asteroid
+                    push();
+                    strokeWeight(3);
+                    stroke(asteroidColor);
+                    noFill();
+                    translate(this.origin.x, this.origin.y);
+                    beginShape();
+                    for (const vertice of this.vertices) {
+                        vertex(vertice.x, vertice.y);
+                    }
+                    endShape(CLOSE);
+                    pop();
+
+                    // draw particles
+                    this.particles.forEach((particle) => {
+                        particle.draw();
+                    });
+                }
+            }
+
+            class Particle {
+                constructor(asteroid) {
+                    this.size = random(0);
+                    this.maxSize = random(5, 15);
+
+                    this.pos = this.generatePos(asteroid);
+                    this.vel = createVector(0, 0);
+                    this.acc = createVector(0, 0);
+                }
+
+                generatePos(asteroid) {
+                    const r = (radius / 2) * sqrt(random());
+                    const theta = TWO_PI * random();
+
+                    return createVector(r * cos(theta), r * sin(theta)).add(
+                        asteroid.origin
+                    );
+                }
+
+                update() {
+                    // make particle acclerate to top left
+                    this.acc.add(
+                        createVector(
+                            random(-100, 0) - this.pos.x,
+                            random(-100, 0) - this.pos.y
+                        ).setMag(0.05)
+                    );
+
+                    // add forces
+                    this.vel.add(this.acc);
+                    this.vel.limit(5);
+                    this.pos.add(this.vel);
+                    this.acc.mult(0);
+
+                    // update status
+                    if (this.pos.x < -2 * this.maxSize) {
+                        this.dead = true;
+                    }
+
+                    // update particle size
+                    if (this.size <= this.maxSize) {
+                        this.size += 0.6;
+                    }
+                }
+
+                draw() {
+                    push();
+                    noStroke();
+                    fill(particleColor);
+                    translate(this.pos.x, this.pos.y);
+                    rotate(this.vel.heading());
+                    rectMode(CENTER);
+                    rect(0, 0, this.size, 3, 100);
+                    pop();
+                }
+            }
+
+            // expose variables to global scope
+            Object.assign(window, { setup, draw });
+        </script>
+    </head>
+    <body></body>
+</html>
