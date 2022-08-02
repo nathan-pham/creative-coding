@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8" />
+        <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+        <link
+            rel="icon"
+            href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🌸</text></svg>"
+        />
+        <title>Water Flower</title>
+
+        <link rel="stylesheet" href="/css/globals.css" />
+        <link rel="stylesheet" href="/css/index.css" />
+
+        <script src="/js/importmap.js"></script>
+
+        <script type="module">
+            import { createGrid, createPalette } from "utils";
+            import "p5";
+
+            let bg, palette;
+            let origin;
+            let flower;
+
+            const setup = () => {
+                createCanvas(600, 600);
+
+                [bg, ...palette] = createPalette().map((c) => color(c));
+                origin = createVector(width / 2, height / 2);
+                flower = new Flower();
+
+                background(bg);
+            };
+
+            const draw = () => {
+                flower.update();
+                flower.draw();
+            };
+
+            class Flower {
+                radius = 0;
+                radiusDir = 1;
+                maxRadius = 200;
+
+                angle = 0;
+
+                update() {
+                    this.angle += random() / 100;
+                    this.radius += this.radiusDir;
+
+                    if (this.radius > this.maxRadius || this.radius < 0) {
+                        this.radiusDir *= -1;
+                    }
+                }
+
+                draw() {
+                    // fill color
+                    noStroke();
+                    fill(
+                        lerpColor(
+                            palette[floor(this.angle) % palette.length],
+                            palette[floor(this.angle + 1) % palette.length],
+                            this.angle % 1
+                        )
+                    );
+
+                    // get positions of two opposite circles
+                    const coord1 = createVector(
+                        this.radius * cos((-this.angle * PI * 100) / 180),
+                        this.radius * sin((-this.angle * PI * 100) / 180)
+                    );
+                    const coord2 = origin.copy().sub(coord1);
+                    coord1.add(origin);
+
+                    circle(coord1.x, coord1.y, 30);
+                    circle(coord2.x, coord2.y, 30);
+
+                    // stop sketch when flower is completed
+                    if (
+                        this.angle >= 16 &&
+                        dist(coord1.x, coord1.y, coord2.x, coord2.y) < 10
+                    ) {
+                        noLoop();
+                    }
+                }
+            }
+
+            // expose variables to global scope
+            Object.assign(window, { setup, draw });
+        </script>
+    </head>
+    <body></body>
+</html>
