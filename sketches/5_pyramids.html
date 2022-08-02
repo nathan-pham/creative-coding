@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8" />
+        <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+        <link
+            rel="icon"
+            href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>⌛</text></svg>"
+        />
+        <title>Pyramids</title>
+
+        <link rel="stylesheet" href="/css/globals.css" />
+        <link rel="stylesheet" href="/css/index.css" />
+
+        <script src="/js/importmap.js"></script>
+
+        <script type="module">
+            import { createPalette } from "utils";
+            import "p5";
+
+            let sun, pyramid, floor;
+            let bg, palette;
+
+            const setup = () => {
+                createCanvas(500, 500);
+
+                [bg, ...palette] = createPalette();
+
+                sun = new Sun(palette[0]);
+                pyramid = new Pyramid(palette[1], palette[2]);
+                floor = new Floor(palette[3]);
+            };
+
+            const draw = () => {
+                background(bg);
+
+                noStroke();
+                sun.draw();
+                pyramid.draw();
+                floor.draw();
+            };
+
+            class Sun {
+                pos = createVector(random(width), 100);
+
+                constructor(color) {
+                    this.color = color;
+                }
+
+                draw() {
+                    noStroke();
+                    fill(this.color);
+                    circle(this.pos.x, this.pos.y, 100);
+                }
+            }
+
+            class Pyramid {
+                constructor(mainColor, shadowColor) {
+                    this.mainColor = mainColor;
+                    this.shadowColor = shadowColor;
+
+                    this.createBody();
+                }
+
+                createBody() {
+                    // x positions of pyramid
+                    const left = random(0, width / 2);
+                    const right = left + random(100, width / 2) + 150;
+                    const peak = random(left, right);
+
+                    // vertices for body triangle
+                    this.body = [
+                        [left, height],
+                        [right, height],
+                        [peak, height / 2],
+                    ].flat(2);
+
+                    // vertices for shade triangle
+                    const offset = sun.pos.x > peak ? -50 : 50;
+                    const side = sun.pos.x > peak ? left : right;
+                    this.shade = [
+                        [side, height],
+                        [side + offset, height],
+                        [peak, height / 2],
+                    ].flat(2);
+                }
+
+                draw() {
+                    fill(sun.color);
+                    triangle(...this.body);
+
+                    fill(this.shadowColor);
+                    triangle(...this.shade);
+                }
+            }
+
+            class Floor {
+                constructor(color) {
+                    this.color = color;
+                }
+
+                draw() {
+                    fill(this.color);
+                    rect(0, height - 100, width, 100);
+                }
+            }
+
+            // expose variables to global scope
+            Object.assign(window, { setup, draw });
+        </script>
+    </head>
+    <body></body>
+</html>
