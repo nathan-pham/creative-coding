@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8" />
+        <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+        <link
+            rel="icon"
+            href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🥪</text></svg>"
+        />
+        <title>Shifting Sands</title>
+
+        <link rel="stylesheet" href="/css/globals.css" />
+        <link rel="stylesheet" href="/css/index.css" />
+
+        <script src="/js/importmap.js"></script>
+
+        <script type="module">
+            import { createPalette } from "utils";
+            import gsap, { Expo } from "gsap";
+            import "p5";
+
+            const segments = 6;
+            let rectangles = [];
+
+            const setup = () => {
+                createCanvas(500, 500);
+                background("white");
+
+                const palette = createPalette();
+                for (let x = 0; x < segments; x++) {
+                    for (let y = 0; y < segments; y++) {
+                        const size = width / segments;
+                        const rectangle = new Rectangle(
+                            (x * width) / segments,
+                            (y * height) / segments,
+                            random() > 0.5 ? size : size * 2,
+                            random() > 0.5 ? size : size * 2,
+                            random(palette)
+                        );
+
+                        rectangles.push(rectangle);
+                        rectangle.animate();
+                    }
+                }
+            };
+
+            const draw = () => {
+                for (const rectangle of rectangles) {
+                    rectangle.draw();
+                }
+            };
+
+            class Rectangle {
+                constructor(x, y, width, height, color) {
+                    this.x = x;
+                    this.y = y;
+                    this.width = width;
+                    this.height = height;
+                    this.color = color;
+                    this.type = floor(random(0, 3));
+                }
+
+                animate() {
+                    const shared = {
+                        yoyo: true,
+                        repeat: -1,
+                        duration: 2,
+                        ease: Expo.easeInOut,
+                    };
+
+                    const animations = {
+                        0: () => {
+                            gsap.fromTo(
+                                this,
+                                { width: this.width },
+                                {
+                                    width: -this.width,
+                                    delay: random(-5, 5),
+                                    ...shared,
+                                }
+                            );
+                        },
+                        1: () => {
+                            gsap.fromTo(
+                                this,
+                                { height: this.height },
+                                {
+                                    height: -this.height,
+                                    delay: random(-5, 5),
+                                    ...shared,
+                                }
+                            );
+                        },
+                    };
+
+                    if (animations.hasOwnProperty(this.type)) {
+                        animations[this.type]();
+                    }
+                }
+
+                draw() {
+                    noStroke();
+                    fill(this.color);
+                    rect(this.x, this.y, this.width, this.height);
+                }
+            }
+
+            // expose variables to global scope
+            Object.assign(window, { setup, draw });
+        </script>
+    </head>
+    <body></body>
+</html>

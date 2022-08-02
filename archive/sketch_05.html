@@ -53,37 +53,7 @@
                     }
                 }
 
-                const shared = {
-                    yoyo: true,
-                    repeat: -1,
-                    duration: 2,
-                    ease: Expo.easeInOut,
-                };
-
                 for (const rectangle of rectangles) {
-                    const type = floor(random(0, 3));
-
-                    if (type == 0) {
-                        gsap.fromTo(
-                            rectangle,
-                            { width: rectangle.width },
-                            {
-                                width: -rectangle.width,
-                                delay: random(-5, 5),
-                                ...shared,
-                            }
-                        );
-                    } else if (type == 1) {
-                        gsap.fromTo(
-                            rectangle,
-                            { height: rectangle.height },
-                            {
-                                height: -rectangle.height,
-                                delay: random(-5, 5),
-                                ...shared,
-                            }
-                        );
-                    }
                 }
             }
 
@@ -96,13 +66,6 @@
                     fill(r.color);
                     noStroke();
                     rect(r.x, r.y, r.width, r.height);
-                    // rectangles.push({
-                    //         x: _x,
-                    //         y: _y,
-                    //         width: _r,
-                    //         height: _r,
-                    //         color: random(palette)
-                    //     })
                 }
             }
         </script>
