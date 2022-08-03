@@ -28,9 +28,9 @@
                 createCanvas(500, 500);
 
                 const origin = createVector(width / 2, height);
-                branches.push(new Branch(origin, segments, trunkColor));
-
-                console.log(random(palette));
+                branches.push(
+                    new Branch(origin, segments, trunkColor, -PI / 2)
+                );
             };
 
             const draw = () => {
@@ -42,12 +42,16 @@
             };
 
             class Branch {
-                constructor(origin, depth, color) {
+                constructor(origin, depth, color, fixAngle) {
                     this.pos = origin.copy();
                     this.depth = depth;
                     this.color = color;
 
-                    this.angle = random(-PI / 2, PI / 2) - PI / 2;
+                    if (fixAngle) {
+                        console.log(fixAngle);
+                    }
+
+                    this.angle = fixAngle || random(-PI / 2, PI / 2) - PI / 2;
                     this.length = random(50, 100) * this.segmentRatio;
                     // * this.segmentRatio;
 
