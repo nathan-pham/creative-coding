@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8" />
+        <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+        <link
+            rel="icon"
+            href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🌸</text></svg>"
+        />
+        <title>Cherry Blossoms</title>
+
+        <link rel="stylesheet" href="/css/globals.css" />
+        <link rel="stylesheet" href="/css/index.css" />
+
+        <script src="/js/importmap.js"></script>
+
+        <script type="module">
+            import { createPalette } from "utils";
+            import p5 from "p5";
+
+            const [bg, trunkColor, ...palette] = createPalette();
+            const segments = 10;
+            const branches = [];
+
+            const setup = () => {
+                createCanvas(500, 500);
+
+                const origin = createVector(width / 2, height);
+                branches.push(new Branch(origin, segments, trunkColor));
+
+                console.log(random(palette));
+            };
+
+            const draw = () => {
+                background(bg);
+
+                branches.forEach((branch) => {
+                    branch.draw();
+                });
+            };
+
+            class Branch {
+                constructor(origin, depth, color) {
+                    this.pos = origin.copy();
+                    this.depth = depth;
+                    this.color = color;
+
+                    this.angle = random(-PI / 2, PI / 2) - PI / 2;
+                    this.length = random(50, 100) * this.segmentRatio;
+                    // * this.segmentRatio;
+
+                    this.generateBranches();
+                    this.generateLeaves();
+                }
+
+                get segmentRatio() {
+                    return this.depth / segments;
+                }
+
+                get endPos() {
+                    return this.pos
+                        .copy()
+                        .add(
+                            p5.Vector.fromAngle(this.angle).setMag(this.length)
+                        );
+                }
+
+                generateBranches() {
+                    if (this.depth >= 0) {
+                        const parameters = [
+                            this.endPos.copy(),
+                            this.depth - 1,
+                            this.color,
+                        ];
+
+                        branches.push(new Branch(...parameters));
+                        branches.push(new Branch(...parameters));
+                    }
+                }
+
+                generateLeaves() {
+                    this.leaves = [];
+                    if (this.depth >= segments - 1) {
+                        return;
+                    }
+
+                    for (let i = 0; i < 5; i++) {
+                        this.leaves.push(
+                            new Leaf(
+                                this.endPos.add(
+                                    p5.Vector.random2D().setMag(random(10, 20))
+                                ),
+                                random(palette),
+                                random(
+                                    this.segmentRatio * 10,
+                                    this.segmentRatio * 20
+                                )
+                            )
+                        );
+                    }
+                }
+
+                draw() {
+                    strokeWeight(this.segmentRatio * 4);
+                    stroke(this.color);
+                    line(this.pos.x, this.pos.y, this.endPos.x, this.endPos.y);
+
+                    for (const leaf of this.leaves) {
+                        leaf.draw();
+                    }
+                }
+            }
+
+            class Leaf {
+                constructor(pos, leafColor, diameter) {
+                    this.pos = pos;
+                    this.leafColor = color(leafColor);
+                    this.diameter = diameter;
+
+                    this.leafColor.setAlpha(random(20, 255));
+                }
+
+                draw() {
+                    noStroke();
+                    fill(this.leafColor);
+                    circle(this.pos.x, this.pos.y, this.diameter);
+                }
+            }
+
+            // expose variables to global scope
+            Object.assign(window, { setup, draw });
+        </script>
+    </head>
+    <body></body>
+</html>
